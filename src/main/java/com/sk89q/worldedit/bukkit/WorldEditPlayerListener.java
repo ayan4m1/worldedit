@@ -87,14 +87,30 @@ public class WorldEditPlayerListener extends PlayerListener {
      *
      * @param event Relevant event details
      */
-    @Override
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        String[] split = event.getMessage().split(" ");
-        
-        if (plugin.getWorldEdit().handleCommand(wrapPlayer(event.getPlayer()), split)) {
-            event.setCancelled(true);
-        }
-    }
+	@Override
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+		String message = event.getMessage();
+		if (message.substring(2).indexOf("/") > 0)
+		{
+			String[] commands = message.substring(2).split("/");
+			for(int i = 0; i < commands.length; i++)
+			{
+				String[] subsplit = commands[i].split(" ");
+				subsplit[0] = "//" + subsplit[0];
+
+				if (plugin.getWorldEdit().handleCommand(wrapPlayer(event.getPlayer()), subsplit)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+		else
+		{
+			String[] split = message.split(" ");
+			if (plugin.getWorldEdit().handleCommand(wrapPlayer(event.getPlayer()), split)) {
+				event.setCancelled(true);
+			}
+		}
+	}
 
     /**
      * Called when a player interacts
